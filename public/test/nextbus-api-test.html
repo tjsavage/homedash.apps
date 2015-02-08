@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../components/nextbus-api.html">
+  </head>
+
+  <body>
+    <nextbus-api></nextbus-api>
+
+    <script>
+      var myEl = document.querySelector('nextbus-api');
+
+      suite('<nextbus-api>', function() {
+        test('starts with empty list bus data', function(){
+          assert.deepEqual(myEl.busPredictions, {});
+        });
+      });
+    </script>
+  </body>
+</html>

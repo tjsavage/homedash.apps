@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
+<!--
+
+`data` holds a map of the following:
+  "routeTag|stopTag" => {
+    "location": {
+      "lat": xx,
+      "long": xx
+    },
+    "predictions": [], 
+  }
+
+-->
+<polymer-element name="nextbus-api" attributes="stops data">
+  <template>
+      <core-ajax id='predictions' auto url='{{ predictionUrl }}'
+      on-core-response="{{ handlePredictionResponse }}"
+      handleAs='xml'></core-ajax>
+      <core-ajax id='route' on-core-response="{{ handleRouteResponse }}" handleAs='xml'></core-ajax>
+      {{ busPredictions }}
+    </template>
+  </template>
+  <script>
+    Polymer({
+      API_URL: "http://webservices.nextbus.com/service/publicXMLFeed",
+      agency: "sf-muni",
+      created: function() {
+        this.data = {};
+        this.stops =  [{
+          "routeTag": "1",
+          "stopTag": "4026"
+        }, {
+          "routeTag": "12",
+          "stopTag": "5846"
+        }];
+      },
+
+      ready: function() {
+        this.stopsChanged(null, this.stops);
+      },
+
+      getStopStr: function(stop) {
+        return stop.routeTag + "|" + stop.stopTag;
+      },
+
+      stopsChanged: function(oldVal, newVal) {
+        this.data = {};
+
+        var urlParams = "command=predictionsForMultiStops&a=" + this.agency;
+        for (var i = 0; i < newVal.length; i++) {
+          var stop = newVal[i];
+          var stopStr = this.getStopStr(stop);
+          urlParams += "&stops=" + stopStr;
+
+          this.data[stopStr] = {};
+        }
+
+        this.predictionUrl = this.API_URL + "?" + urlParams;
+        this.startRouteLookups();
+      },
+
+      startRouteLookups: function() {
+        for(var i = 0; i < this.stops.length; i++) {
+          var stop = this.stops[i];
+          var routeUrl = this.API_URL + "?command=routeConfig&a=" + this.agency + "&r=" + stop.routeTag;
+          this.$.route.url = routeUrl;
+          this.$.route.go();
+        }
+      },
+
+      handlePredictionResponse: function(event, xmlData) {
+        var xmlResponse = xmlData.response;
+
+        var predictionsNodes = xmlResponse.getElementsByTagName("predictions");
+        var predictions = {};
+        for (var i = 0; i < predictionsNodes.length; i++) {
+          var currPredictionsNode = predictionsNodes[i];
+          var stopStr = currPredictionsNode.attributes["routeTag"].value + "|" + currPredictionsNode.attributes["stopTag"].value;
+
+          var predictionValues = [];
+
+          var predictionNodes = currPredictionsNode.getElementsByTagName("prediction");
+          for (var j = 0; j < predictionNodes.length; j++) {
+            var currPredictionNode = predictionNodes[j];
+            predictionValues.push(currPredictionNode.attributes["minutes"].value);
+          }
+
+          this.data[stopStr]['predictions'] = predictionValues;
+        }
+        console.log(this.data);
+      },
+
+      handleRouteResponse: function(event, xmlData) {
+        var xmlResponse = xmlData.response;
+
+        for(var i = 0; i < this.stops.length; i++) {
+          var stop = this.stops[i];
+          var stopStr = this.getStopStr(stop);
+
+          var queryString = 'stop[tag="' + stop.stopTag + '"]';
+          var stopNode = xmlResponse.querySelector(queryString);
+          if(stopNode) {
+            var location = {
+              "lat": stopNode.attributes["lat"].value,
+              "lon": stopNode.attributes["lon"].value
+            }
+
+            this.data[stopStr]["location"] = location;
+            this.data[stopStr]["title"] = stopNode.attributes["title"].value;
+          }
+        }
+      }
+    })
+  </script>
+</polymer-element>

@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="weather-api" attributes="lat lon currentWeather currentWeatherCode weatherPredictions">
+  <template>
+    <core-ajax auto id="currentWeatherAjax" url="http://api.openweathermap.org/data/2.5/weather"
+      params='{"lat": "{{ lat }}", "lon": "{{ lon }}"}' on-core-response="{{ handleCurrentWeather }}"></core-ajax>
+  </template>
+  <script>
+    Polymer({
+      created: function() {
+        this.lat = 37.7931162;
+        this.lon = -122.421332;
+        this.currentWeather = {};
+        this.currentWeatherTitle = "";
+        this.weatherPredictions = {};
+      },
+
+      handleCurrentWeather: function(event, response) {
+        var data = JSON.parse(response.response);
+
+        console.log(data);
+        this.currentWeatherCode = data["weather"][0]["icon"];
+        console.log(this.currentWeatherCode);
+      }
+    });
+  </script>
+</polymer-element>

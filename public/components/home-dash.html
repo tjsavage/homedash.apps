@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="nextbus-api.html">
+<link rel="import" href="weather-api.html">
+<link rel="import" href="base-card.html">
+<link rel="import" href="nextbus-card.html".
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+
+<polymer-element name="home-dash" vertical layout>
+  <template>
+    <style>
+      :host {
+        background-color: #ddd;
+      }
+
+      core-toolbar {
+        background: #264357;
+      }
+
+      core-toolbar .title {
+        text-align: center;
+        color: #ccc;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+      }
+
+    </style>
+    <core-toolbar>
+      <div flex class="title">Home Dashboard</div>
+    </core-toolbar>
+    <nextbus-api></nextbus-api>
+    <weather-api></weather-api>
+    <div class="cards" vertical layout>
+      <base-card flex auto vertical layout></base-card>
+      <base-card></base-card>
+      <nextbus-card class="tall"></nextbus-card>
+    </div>
+  </template>
+  <script>
+    Polymer({});
+  </script>
+</polymer-element>

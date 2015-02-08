@@ -1,0 +1,16 @@
+{
+  "name": "HomeDash",
+  "description": "",
+  "homepage": "",
+  "keywords": [
+  ],
+  "author": "",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#latest",
+    "platform": "Polymer/platform#latest",
+    "paper-elements": "Polymer/paper-elements#latest",
+    "core-ajax": "Polymer/core-ajax",
+    "web-component-tester": "Polymer/web-component-tester"
+  }
+}
