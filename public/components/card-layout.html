@@ -1,0 +1,24 @@
+<polymer-element name="card-layout">
+    <template>
+        <style>
+            .layout-wrap {
+                width: 100%;
+                margin: 30px auto;
+            }
+
+            .columns {
+                column-count: 3;
+                column-gap: 15px;
+                column-fill: auto;
+            }
+        </style>
+        <div class="layout-wrap">
+            <content></content>
+        </div>
+    </template>
+    <script>
+        Polymer({
+
+        })
+    </script>
+</polymer-element>
